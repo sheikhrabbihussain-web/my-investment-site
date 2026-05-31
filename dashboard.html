@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>ড্যাশবোর্ড - GrowWealth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-6">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow">
+        <h1 class="text-xl font-bold">আপনার ব্যালেন্স: ৳<span id="balance">0</span></h1>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        const firebaseConfig = { /* এখানে সেই একই firebaseConfig টি আবার বসান */ };
+        initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    document.getElementById('balance').innerText = docSnap.data().balance;
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>

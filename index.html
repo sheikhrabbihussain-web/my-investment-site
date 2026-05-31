@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>GrowWealth - লগইন</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm">
+        <h2 id="formTitle" class="text-2xl font-bold mb-6 text-center">রেজিস্ট্রেশন</h2>
+        <input type="text" id="name" placeholder="আপনার নাম" class="w-full p-2 border rounded mb-3">
+        <input type="email" id="email" placeholder="ইমেইল" class="w-full p-2 border rounded mb-3">
+        <input type="password" id="password" placeholder="পাসওয়ার্ড" class="w-full p-2 border rounded mb-4">
+        <button id="btn" class="w-full bg-blue-600 text-white p-2 rounded font-bold">রেজিস্ট্রেশন</button>
+        <p id="toggle" class="text-center mt-4 text-blue-500 cursor-pointer text-sm">লগইন করতে ক্লিক করুন</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABdPpBa_KODkbZ9u8kWjWpTwUPRe9QRVA",
+            authDomain: "dippo-2ad10.firebaseapp.com",
+            projectId: "dippo-2ad10",
+            storageBucket: "dippo-2ad10.firebasestorage.app",
+            messagingSenderId: "515903837375",
+            appId: "1:515903837375:web:73b82fcfa4a62db837620a",
+            measurementId: "G-ENELXH0QK7"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore();
+
+        let isLogin = false;
+        document.getElementById('toggle').onclick = () => {
+            isLogin = !isLogin;
+            document.getElementById('formTitle').innerText = isLogin ? "লগইন" : "রেজিস্ট্রেশন";
+            document.getElementById('btn').innerText = isLogin ? "লগইন" : "রেজিস্ট্রেশন";
+            document.getElementById('name').style.display = isLogin ? "none" : "block";
+        };
+
+        document.getElementById('btn').onclick = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                if (isLogin) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.location.href = "dashboard.html";
+                } else {
+                    const res = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(doc(db, "users", res.user.uid), { name: document.getElementById('name').value, balance: 0 });
+                    alert("সফলভাবে রেজিস্ট্রেশন হয়েছে!");
+                }
+            } catch (e) { alert(e.message); }
+        };
+    </script>
+</body>
+</html>
