@@ -1,0 +1,23 @@
+<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow">
+    <h2 class="text-lg text-gray-700 mb-2">স্বাগতম, <span id="userName" class="font-bold"></span></h2>
+    
+    <h1 class="text-xl font-bold">আপনার ব্যালেন্স: ৳<span id="balance">0</span></h1>
+    <button onclick="logout()" class="mt-4 bg-red-500 text-white p-2 rounded">লগআউট</button>
+</div>
+
+<script type="module">
+    // ... (পূর্বের ফায়ারবেস ইমপোর্টগুলো থাকবে)
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const docSnap = await getDoc(doc(db, "users", user.uid));
+            if (docSnap.exists()) {
+                document.getElementById('balance').innerText = docSnap.data().balance;
+                document.getElementById('userName').innerText = docSnap.data().name; // নতুন লাইন
+            }
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+    // ...
+</script>
